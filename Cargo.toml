@@ -2,6 +2,8 @@
 name = "gqlog"
 version = "0.1.0"
 authors = ["Stephen Belanger <admin@stephenbelanger.com>"]
+description = " 👾 filter your json logs with graphql 👾 "
+license = "MIT"
 
 [dependencies]
 graphql-parser = "0.2.0"
