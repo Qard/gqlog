@@ -1,9 +1,14 @@
 [package]
 name = "gqlog"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stephen Belanger <admin@stephenbelanger.com>"]
 description = " 👾 filter your json logs with graphql 👾 "
+repository = "https://github.com/qard/gqlog"
+readme = "README.md"
 license = "MIT"
+
+keywords = [ "log", "graphql", "gql", "filter" ]
+categories = [ "command-line-utilities", "text-processing" ]
 
 [dependencies]
 graphql-parser = "0.2.0"
