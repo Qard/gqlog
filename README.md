@@ -1,11 +1,11 @@
 # gqlog
 
-gqlog is a command-line app for filter a line-delimited stream of JSON messages
+gqlog is a command-line app for filtering a line-delimited stream of JSON messages
 using GraphQL syntax.
 
 ## Install
 
-```toml
+```sh
 cargo install gqlog
 ```
 
