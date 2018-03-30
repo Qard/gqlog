@@ -17,7 +17,7 @@ echo '{"foo":"bar","baz":"buz"}' | gqlog '{foo}'
 
 ---
 
-### Copyright (c) 2013 Stephen Belanger
+### Copyright (c) 2018 Stephen Belanger
 
 #### Licensed under MIT License
 
