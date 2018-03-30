@@ -1,0 +1,8 @@
+[package]
+name = "gqlog"
+version = "0.1.0"
+authors = ["Stephen Belanger <admin@stephenbelanger.com>"]
+
+[dependencies]
+graphql-parser = "0.2.0"
+serde_json = "1.0.13"
