@@ -82,7 +82,7 @@ dependencies = [
 
 [[package]]
 name = "gqlog"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "graphql-parser 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.36 (registry+https://github.com/rust-lang/crates.io-index)",

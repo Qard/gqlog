@@ -62,6 +62,7 @@
 // - Add fragment support
 // - Make object expectations fail non-object inputs
 extern crate serde;
+#[allow(unused_imports)]
 #[macro_use]
 extern crate serde_json;
 extern crate graphql_parser;
