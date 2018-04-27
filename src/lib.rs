@@ -75,11 +75,13 @@ mod filters {
     use serde_json::{ Value };
     use serde_json::map::Map;
     use graphql_parser::query::*;
+    use graphql_parser::query::Value as GValue;
 
     #[derive(Clone, Debug)]
     pub enum Filters {
         Field(String),
-        Object(String, Vec<Filters>)
+        Object(String, Vec<Filters>),
+        Entries(String, Vec<Filters>),
     }
 
     // TODO: Fail when requested fields do not exist
@@ -97,6 +99,23 @@ mod filters {
                 Filters::Object(field, fields) => {
                     if let Some(value) = object.get(&field) {
                         map.insert(field, filter_value(fields, value.clone()));
+                    }
+                }
+                Filters::Entries(field, fields) => {
+                    if let Some(value) = object.get(&field) {
+                        if let Value::Object(ref items) = *value {
+                            let array = filter_array(fields,
+                                items.iter().map(|(k, v)| {
+                                    Value::Object(vec![
+                                        ("key".into(), Value::String(k.clone())),
+                                        ("value".into(), v.clone()),
+                                    ].into_iter().collect())
+                                }).collect());
+                            map.insert(field, Value::Array(array));
+                        } else {
+                            map.insert(field,
+                                filter_value(fields, value.clone()));
+                        }
                     }
                 }
             }
@@ -122,8 +141,30 @@ mod filters {
         selection.items.iter()
             .filter_map(|selection| {
                 if let Selection::Field(field) = selection.clone() {
-                    if field.selection_set.items.len() > 0 {
-                        Some(Filters::Object(field.name, get_filters(field.selection_set)))
+                    let subfilters = get_filters(field.selection_set);
+                    if field.arguments.len() > 0 {
+                        for argument in &field.arguments {
+                            match &argument.0[..] {
+                                "entries" => {
+                                    match argument.1 {
+                                        GValue::Boolean(true) => {
+                                            return Some(Filters::Entries(
+                                                field.name,
+                                                subfilters));
+                                        }
+                                        GValue::Boolean(false) => {}
+                                        _ => {
+                                            panic!("invalid argument {:?}",
+                                                argument);
+                                        }
+                                    }
+                                }
+                                _ => panic!("invalid argument {:?}", argument),
+                            }
+                        }
+                    }
+                    if subfilters.len() > 0 {
+                        Some(Filters::Object(field.name, subfilters))
                     } else {
                         Some(Filters::Field(field.name))
                     }
@@ -353,6 +394,21 @@ mod tests {
         });
 
         let expect = r#"{"nested":[{"foo":"bar"},{"foo":"bar"}]}"#;
+
+        assert_eq!(super::filter_value(query, data).to_string(), expect);
+    }
+
+    #[test]
+    fn dictionary() {
+        let query = String::from("{ dict(entries: true) { value { name } } }");
+        let data = json!({
+            "dict": {
+                "item1": {"name": "item one"},
+                "item2": {"name": "item two"},
+            },
+        });
+
+        let expect = r#"{"dict":[{"value":{"name":"item one"}},{"value":{"name":"item two"}}]}"#;
 
         assert_eq!(super::filter_value(query, data).to_string(), expect);
     }
