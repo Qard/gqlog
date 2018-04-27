@@ -187,7 +187,7 @@ mod filters {
 pub fn filter_stream<'de, R>(query: String, reader: R, func: fn(Value)) where R: Read<'de> {
     // Parse query string to AST
     match parse_query(&query) {
-        Err(error) => panic!(error),
+        Err(error) => panic!("Bad query: {}", error),
         Ok(ast) => {
             // Convert AST to selection tree
             let selection = filters::get_selection(ast);
